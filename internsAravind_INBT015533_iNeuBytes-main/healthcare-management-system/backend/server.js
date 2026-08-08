@@ -20,6 +20,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  if (typeof req.body === 'string' && req.body.trim()) {
+    try { req.body = JSON.parse(req.body); } catch (e) {}
+  }
+  next();
+});
 
 // Serve the frontend (static HTML/CSS/JS) directly from the backend for easy local demo
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
