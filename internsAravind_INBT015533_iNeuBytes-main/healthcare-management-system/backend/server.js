@@ -32,6 +32,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);

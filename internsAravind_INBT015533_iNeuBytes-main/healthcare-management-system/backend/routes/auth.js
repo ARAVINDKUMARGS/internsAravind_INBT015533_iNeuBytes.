@@ -74,9 +74,8 @@ router.post('/register-staff', authenticate, async (req, res) => {
   }
 });
 
-// POST /api/auth/login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+async function handleLogin(req, res) {
+  const { email, password } = req.body || {};
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
   try {
@@ -96,7 +95,12 @@ router.post('/login', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Login failed', message: err.message, stack: err.stack });
   }
-});
+}
+
+// POST /api/auth/login (supports all route variations)
+router.post('/login', handleLogin);
+router.post('/auth/login', handleLogin);
+router.post('/api/auth/login', handleLogin);
 
 // POST /api/auth/forgot-password
 router.post('/forgot-password', async (req, res) => {
