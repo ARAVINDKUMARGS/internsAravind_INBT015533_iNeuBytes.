@@ -24,7 +24,9 @@ if (!isSQLite) {
     queueLimit: 0
   });
 } else {
-  const dbFile = process.env.DB_FILE || path.join(__dirname, '..', 'healthcare.db');
+  const isOnVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true' || Boolean(process.env.NOW_REGION);
+  const defaultPath = isOnVercel ? path.join('/tmp', 'healthcare.db') : path.join(__dirname, '..', 'healthcare.db');
+  const dbFile = process.env.DB_FILE || defaultPath;
   sqliteDb = new DatabaseSync(dbFile);
 }
 
