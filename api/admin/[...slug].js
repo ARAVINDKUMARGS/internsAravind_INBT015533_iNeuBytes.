@@ -1,0 +1,10 @@
+const path = require('path');
+const serverPath = path.resolve(__dirname, '..', '..', 'internsAravind_INBT015533_iNeuBytes-main', 'healthcare-management-system', 'backend', 'server.js');
+const app = require(serverPath);
+
+module.exports = (req, res) => {
+  if (req.url && !req.url.startsWith('/api')) {
+    req.url = '/api/admin' + (req.url.startsWith('/') ? '' : '/') + req.url;
+  }
+  return app(req, res);
+};
