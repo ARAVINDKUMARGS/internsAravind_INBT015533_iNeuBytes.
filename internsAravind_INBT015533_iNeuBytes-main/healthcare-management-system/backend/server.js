@@ -36,10 +36,15 @@ app.use('/api/email', emailRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'Healthcare Management System API is running' }));
 
-// Fallback: send index.html for unknown non-API routes (simple SPA-ish routing)
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api/')) return next();
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+// Fallback: send index.html for GET non-API routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api') || req.url.startsWith('/api')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  if (req.method === 'GET') {
+    return res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+  }
+  return res.status(404).json({ error: 'Route not found' });
 });
 
 // Central error handler
