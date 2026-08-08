@@ -48,12 +48,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, async () => {
-  console.log(`Healthcare Management System API running on http://localhost:${PORT}`);
-  // Proactively verify SMTP connection on startup
-  await verifySmtp();
-  // Initialize automated background 24h appointment reminder scheduler
-  initReminderScheduler();
-});
+if (require.main === module) {
+  app.listen(PORT, async () => {
+    console.log(`Healthcare Management System API running on http://localhost:${PORT}`);
+    // Proactively verify SMTP connection on startup
+    await verifySmtp();
+    // Initialize automated background 24h appointment reminder scheduler
+    initReminderScheduler();
+  });
+}
+
+module.exports = app;
 
 
