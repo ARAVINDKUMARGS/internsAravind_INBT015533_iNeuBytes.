@@ -1,9 +1,5 @@
 const path = require('path');
-let app;
-try {
-  app = require('./internsAravind_INBT015533_iNeuBytes-main/healthcare-management-system/backend/server');
-} catch (e) {
-  app = require('../healthcare-management-system/backend/server');
-}
+const serverPath = path.resolve(__dirname, '..', 'internsAravind_INBT015533_iNeuBytes-main', 'healthcare-management-system', 'backend', 'server.js');
+const app = require(serverPath);
 
 module.exports = app;
