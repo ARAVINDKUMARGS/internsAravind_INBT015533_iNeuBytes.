@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Health Clinic — Care that keeps pace with your life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F7F3;
+    --bg-alt:#EDF2EC;
+    --ink:#14231F;
+    --pine:#1B4B43;
+    --pine-deep:#123530;
+    --coral:#E15B4F;
+    --coral-deep:#C74739;
+    --sage:#6B7D77;
+    --line:#D8DED9;
+    --card:#FFFFFF;
+    --radius:14px;
+    --max:1180px;
+    font-size:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Manrope', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    line-height:1.12;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--coral-deep);
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:18px; height:2px;
+    background:var(--coral);
+    display:inline-block;
+  }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 26px;
+    border-radius:100px;
+    font-weight:700;
+    font-size:0.95rem;
+    cursor:pointer;
+    border:1.5px solid transparent;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{ background:var(--coral); color:#fff; box-shadow:0 8px 20px -8px rgba(225,91,79,0.55); }
+  .btn-primary:hover{ background:var(--coral-deep); transform:translateY(-2px); }
+  .btn-ghost{ background:transparent; color:var(--pine); border-color:var(--line); }
+  .btn-ghost:hover{ border-color:var(--pine); transform:translateY(-2px); }
+  .btn-light{ background:#fff; color:var(--pine-deep); }
+  .btn-light:hover{ transform:translateY(-2px); box-shadow:0 8px 20px -8px rgba(0,0,0,0.25);}
+
+  /* ---------- PULSE DIVIDER (signature element) ---------- */
+  .pulse-divider{ width:100%; height:34px; overflow:hidden; }
+  .pulse-divider svg{ width:100%; height:100%; display:block; }
+  .pulse-path{
+    fill:none;
+    stroke:var(--pine);
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:1400;
+    stroke-dashoffset:1400;
+    animation:draw 2.4s ease forwards 0.3s;
+  }
+  .pulse-divider.alt .pulse-path{ stroke:rgba(255,255,255,0.55); }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(244,247,243,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:var(--max); margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces', serif; font-weight:600; font-size:1.15rem; color:var(--pine-deep); }
+  .logo-mark{ width:30px; height:30px; flex-shrink:0; }
+  .nav-links{ display:flex; align-items:center; gap:34px; font-weight:600; font-size:0.94rem; }
+  .nav-links a{ color:var(--ink); position:relative; padding:4px 0; }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:-2px; width:0; height:2px; background:var(--coral);
+    transition:width .2s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+  .nav-cta{ display:flex; align-items:center; gap:14px; }
+  .burger{ display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; padding:6px; }
+  .burger span{ width:24px; height:2px; background:var(--ink); border-radius:2px; transition:.25s; }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:76px 0 40px; }
+  .hero-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center; }
+  .hero h1{ font-size:clamp(2.3rem, 4.2vw, 3.4rem); color:var(--pine-deep); margin-bottom:22px; }
+  .hero h1 em{ font-style:italic; color:var(--coral); }
+  .hero p.lead{ font-size:1.08rem; color:var(--sage); max-width:480px; margin-bottom:32px; }
+  .hero-actions{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:38px; }
+  .hero-stats{ display:flex; gap:36px; flex-wrap:wrap; }
+  .stat-num{ font-family:'IBM Plex Mono', monospace; font-size:1.5rem; font-weight:500; color:var(--pine-deep); }
+  .stat-label{ font-size:0.78rem; color:var(--sage); }
+
+  /* quick booking card */
+  .quick-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 30px 60px -30px rgba(18,53,48,0.25);
+    position:relative;
+  }
+  .quick-card::before{
+    content:"NEXT AVAILABLE";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:0.12em;
+    color:var(--coral-deep);
+    background:#FDEDEA;
+    padding:5px 10px;
+    border-radius:100px;
+    position:absolute;
+    top:-13px; left:24px;
+  }
+  .slot-list{ display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .slot{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    font-size:0.88rem; transition:border-color .15s ease, background .15s ease;
+  }
+  .slot:hover{ border-color:var(--pine); background:var(--bg-alt); }
+  .slot .dept{ font-weight:700; color:var(--pine-deep); }
+  .slot .time{ font-family:'IBM Plex Mono', monospace; color:var(--sage); font-size:0.8rem; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{ padding:78px 0; }
+  .section-head{ max-width:640px; margin-bottom:52px; }
+  .section-head h2{ font-size:clamp(1.8rem,3vw,2.5rem); color:var(--pine-deep); }
+  .section-head p{ color:var(--sage); margin-top:14px; font-size:1.02rem; }
+  .bg-alt{ background:var(--bg-alt); }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px; align-items:center; }
+  .about-visual{
+    background:linear-gradient(160deg, var(--pine) 0%, var(--pine-deep) 100%);
+    border-radius:20px; padding:36px; color:#fff; min-height:340px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .about-visual .quote{ font-family:'Fraunces', serif; font-size:1.3rem; line-height:1.4; font-style:italic; }
+  .about-visual .who{ font-family:'IBM Plex Mono', monospace; font-size:0.78rem; opacity:0.75; margin-top:18px; }
+  .about-list{ display:flex; flex-direction:column; gap:18px; margin-top:24px; }
+  .about-item{ display:flex; gap:14px; align-items:flex-start; }
+  .about-item .dot{ width:8px; height:8px; border-radius:50%; background:var(--coral); margin-top:8px; flex-shrink:0; }
+  .about-item h4{ font-family:'Manrope', sans-serif; font-weight:700; font-size:1rem; margin-bottom:3px; }
+  .about-item p{ color:var(--sage); font-size:0.94rem; }
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .service-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:30px 26px; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .service-card:hover{ transform:translateY(-5px); box-shadow:0 22px 40px -24px rgba(18,53,48,0.3); border-color:var(--pine); }
+  .service-icon{ width:44px; height:44px; margin-bottom:18px; color:var(--pine); }
+  .service-card h3{ font-size:1.15rem; margin-bottom:8px; color:var(--pine-deep); }
+  .service-card p{ font-size:0.92rem; color:var(--sage); }
+
+  /* ---------- WHY CHOOSE US ---------- */
+  .why-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:0; border-top:1px solid var(--line); }
+  .why-item{ padding:30px 22px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .why-item:nth-child(4n){ border-right:none; }
+  .why-num{ font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--coral-deep); margin-bottom:12px; }
+  .why-item h4{ font-family:'Manrope', sans-serif; font-size:1.02rem; font-weight:700; margin-bottom:8px; color:var(--pine-deep); }
+  .why-item p{ font-size:0.9rem; color:var(--sage); }
+
+  /* ---------- DOCTORS ---------- */
+  .doctors-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .doctor-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .doctor-card:hover{ transform:translateY(-5px); box-shadow:0 22px 40px -24px rgba(18,53,48,0.3); }
+  .doctor-top{ padding:26px 26px 0; display:flex; gap:16px; align-items:center; }
+  .avatar{
+    width:58px; height:58px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:600; font-size:1.1rem; color:#fff;
+  }
+  .doctor-card h3{ font-size:1.08rem; color:var(--pine-deep); }
+  .doctor-card .spec{ font-family:'IBM Plex Mono', monospace; font-size:0.75rem; color:var(--coral-deep); margin-top:2px; }
+  .doctor-body{ padding:18px 26px 26px; }
+  .doctor-body p{ font-size:0.88rem; color:var(--sage); margin-bottom:16px; }
+  .doctor-tags{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tag{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; padding:4px 9px; background:var(--bg-alt); border-radius:100px; color:var(--pine-deep); }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testi-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .testi-card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:28px; }
+  .testi-mark{ font-family:'Fraunces', serif; font-size:2.4rem; color:var(--coral); line-height:1; margin-bottom:6px; }
+  .testi-card p.body{ font-size:0.95rem; color:var(--ink); margin-bottom:20px; }
+  .testi-who{ display:flex; align-items:center; gap:12px; }
+  .testi-who .mini-avatar{ width:36px; height:36px; border-radius:50%; background:var(--pine); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', monospace; font-size:0.75rem; }
+  .testi-who .name{ font-weight:700; font-size:0.88rem; }
+  .testi-who .role{ font-size:0.78rem; color:var(--sage); }
+
+  /* ---------- CONTACT / APPOINTMENT FORM ---------- */
+  .contact-grid{ display:grid; grid-template-columns:1fr 1.15fr; gap:50px; }
+  .contact-info h2{ color:var(--pine-deep); font-size:clamp(1.8rem,3vw,2.3rem); margin-bottom:18px; }
+  .contact-info p{ color:var(--sage); margin-bottom:28px; }
+  .info-row{ display:flex; gap:14px; align-items:flex-start; margin-bottom:22px; }
+  .info-row .ico{ width:20px; height:20px; color:var(--coral); flex-shrink:0; margin-top:2px; }
+  .info-row h4{ font-family:'Manrope', sans-serif; font-weight:700; font-size:0.95rem; }
+  .info-row p{ font-size:0.88rem; color:var(--sage); margin:0; }
+  .map-frame{ border-radius:14px; overflow:hidden; border:1px solid var(--line); margin-top:24px; height:200px; }
+  .map-frame iframe{ width:100%; height:100%; border:0; }
+
+  .form-card{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px; }
+  .form-card h3{ font-size:1.3rem; color:var(--pine-deep); margin-bottom:6px; }
+  .form-card .sub{ font-size:0.88rem; color:var(--sage); margin-bottom:26px; }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.full{ grid-column:1 / -1; }
+  label{ font-size:0.82rem; font-weight:700; color:var(--pine-deep); }
+  input, select, textarea{
+    font-family:'Manrope', sans-serif;
+    font-size:0.94rem;
+    padding:12px 14px;
+    border-radius:9px;
+    border:1.5px solid var(--line);
+    background:var(--bg);
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  input:focus, select:focus, textarea:focus{ border-color:var(--pine); background:#fff; }
+  textarea{ resize:vertical; min-height:96px; font-family:'Manrope', sans-serif; }
+  .error-msg{ font-size:0.76rem; color:var(--coral-deep); min-height:14px; font-family:'IBM Plex Mono', monospace; }
+  input.invalid, select.invalid, textarea.invalid{ border-color:var(--coral-deep); background:#FDEDEA; }
+  .form-submit{ margin-top:6px; width:100%; }
+  .form-success{
+    display:none; margin-top:16px; padding:14px 16px; border-radius:10px;
+    background:#E7F2EA; border:1px solid #BEDCC5; color:var(--pine-deep); font-size:0.88rem; font-weight:600;
+  }
+  .form-success.show{ display:block; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--pine-deep); color:#fff; padding:60px 0 30px; }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+  .footer-logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces', serif; font-size:1.1rem; margin-bottom:14px; }
+  footer p{ color:rgba(255,255,255,0.6); font-size:0.88rem; max-width:280px; }
+  footer h5{ font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:16px; }
+  footer .flinks{ display:flex; flex-direction:column; gap:10px; }
+  footer .flinks a{ color:rgba(255,255,255,0.85); font-size:0.9rem; }
+  footer .flinks a:hover{ color:var(--coral); }
+  .footer-bottom{ border-top:1px solid rgba(255,255,255,0.12); padding-top:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:0.8rem; color:rgba(255,255,255,0.5); }
+
+  /* ---------- REVEAL ANIMATION ---------- */
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .pulse-path{ animation:none; stroke-dashoffset:0; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    .hero-grid{ grid-template-columns:1fr; gap:44px; }
+    .about-grid{ grid-template-columns:1fr; }
+    .contact-grid{ grid-template-columns:1fr; }
+    .services-grid{ grid-template-columns:repeat(2, 1fr); }
+    .doctors-grid{ grid-template-columns:repeat(2, 1fr); }
+    .testi-grid{ grid-template-columns:repeat(2, 1fr); }
+    .why-grid{ grid-template-columns:repeat(2, 1fr); }
+    .why-item:nth-child(4n){ border-right:1px solid var(--line); }
+    .why-item:nth-child(2n){ border-right:none; }
+    .footer-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width: 720px){
+    .nav-links{
+      position:fixed; top:68px; left:0; right:0; bottom:0;
+      background:var(--bg); flex-direction:column; align-items:flex-start;
+      padding:30px 28px; gap:22px; font-size:1.1rem;
+      transform:translateX(100%); transition:transform .3s ease;
+      z-index:99;
+    }
+    .nav-links.open{ transform:translateX(0); }
+    .nav-cta .btn-ghost{ display:none; }
+    .burger{ display:flex; }
+    .services-grid, .doctors-grid, .testi-grid{ grid-template-columns:1fr; }
+    .why-grid{ grid-template-columns:1fr; }
+    .why-item{ border-right:none !important; }
+    .form-row{ grid-template-columns:1fr; }
+    .hero-stats{ gap:26px; }
+    .footer-grid{ grid-template-columns:1fr; gap:30px; }
+    section{ padding:56px 0; }
+    .hero{ padding:44px 0 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER / NAV ================= -->
+<header>
+  <nav>
+    <a href="#home" class="logo">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="15" stroke="#1B4B43" stroke-width="1.5"/>
+        <path d="M4 16h6l2-7 4 14 3-10 2 3h7" stroke="#E15B4F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Meridian
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home" class="nav-close">Home</a></li>
+      <li><a href="#services" class="nav-close">Services</a></li>
+      <li><a href="#doctors" class="nav-close">Doctors</a></li>
+      <li><a href="#testimonials" class="nav-close">Testimonials</a></li>
+      <li><a href="#contact" class="nav-close">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-ghost">Call (555) 019-2200</a>
+      <a href="#contact" class="btn btn-primary">Book Appointment</a>
+      <button class="burger" id="burger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Meridian Health Clinic</div>
+      <h1>Care that keeps pace <em>with your life</em>.</h1>
+      <p class="lead">Same-week appointments, doctors who remember your history, and a clinic built around how people actually live — not just when they get sick.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Book an appointment</a>
+        <a href="#services" class="btn btn-ghost">Explore services</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">14 yrs</div>
+          <div class="stat-label">Serving the community</div>
+        </div>
+        <div>
+          <div class="stat-num">28,000+</div>
+          <div class="stat-label">Patients treated</div>
+        </div>
+        <div>
+          <div class="stat-num">96%</div>
+          <div class="stat-label">Would recommend us</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-card">
+      <div class="eyebrow" style="margin-bottom:4px;">This week's open slots</div>
+      <p style="font-size:0.85rem; color:var(--sage);">Pick a slot below or use the full form to request a time that works for you.</p>
+      <div class="slot-list">
+        <div class="slot"><span class="dept">General Medicine</span><span class="time">Today · 4:30 PM</span></div>
+        <div class="slot"><span class="dept">Pediatrics</span><span class="time">Tomorrow · 10:00 AM</span></div>
+        <div class="slot"><span class="dept">Dermatology</span><span class="time">Thu · 2:15 PM</span></div>
+        <div class="slot"><span class="dept">Cardiology</span><span class="time">Fri · 11:45 AM</span></div>
+      </div>
+      <a href="#contact" class="btn btn-primary" style="width:100%; margin-top:20px;">Request this week</a>
+    </div>
+  </div>
+</section>
+
+<div class="pulse-divider"><svg viewBox="0 0 1200 34" preserveAspectRatio="none"><path class="pulse-path" d="M0 17 H420 L455 4 L490 30 L520 17 H1200"/></svg></div>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="wrap about-grid">
+    <div class="about-visual reveal">
+      <div class="quote">"Every intern's work here is treated with the same care we'd give a real patient chart — reviewed, valued, and never lost in the shuffle."</div>
+      <div class="who">— MERIDIAN CLINIC, FOUNDING PHILOSOPHY</div>
+    </div>
+    <div class="reveal">
+      <div class="eyebrow">About the clinic</div>
+      <h2 style="font-size:clamp(1.7rem,3vw,2.3rem); color:var(--pine-deep); margin-bottom:16px;">A clinic built around continuity of care</h2>
+      <p style="color:var(--sage); max-width:520px;">Meridian brings together general practice, specialist consultations, and preventive care under one roof, so patients are never passed between disconnected systems.</p>
+      <div class="about-list">
+        <div class="about-item"><span class="dot"></span><div><h4>One record, every visit</h4><p>Your history follows you between departments — no repeating yourself at every desk.</p></div></div>
+        <div class="about-item"><span class="dot"></span><div><h4>Same-week access</h4><p>Most departments offer appointments within 3 working days, not 3 weeks.</p></div></div>
+        <div class="about-item"><span class="dot"></span><div><h4>Transparent pricing</h4><p>Consultation fees are shown up front on every doctor's profile — no surprises after.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section id="services" class="bg-alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Medical services</div>
+      <h2>Departments built around common needs, not hospital org charts</h2>
+      <p>Six core departments cover the majority of what brings people in — from routine checkups to ongoing specialist care.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.5 8 2.3 4 6.2 4c2 0 3.4 1.1 4.2 2.4C11.2 5.1 12.6 4 14.6 4c3.9 0 5.7 4 4.2 7.8C16.3 16.4 12 21 12 21z"/></svg>
+        <h3>General Medicine</h3>
+        <p>Routine checkups, chronic condition management, and referrals for anything beyond primary care.</p>
+      </div>
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 21c0-4 3.1-7 7-7s7 3 7 7"/></svg>
+        <h3>Pediatrics</h3>
+        <p>Growth checks, vaccinations, and a waiting room designed to keep kids (and parents) calm.</p>
+      </div>
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l2-7 4 14 3-10 2 3h3"/></svg>
+        <h3>Cardiology</h3>
+        <p>ECGs, stress testing, and long-term heart health monitoring with the same specialist each visit.</p>
+      </div>
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9h.01M15 9h.01M8 15c1.2 1.2 2.6 1.8 4 1.8s2.8-.6 4-1.8"/></svg>
+        <h3>Dermatology</h3>
+        <p>Skin checks, acne and eczema treatment, and mole mapping for early detection.</p>
+      </div>
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 14v-3a3 3 0 016 0v3M6 14a3 3 0 106 0M18 14v-3a3 3 0 00-6 0"/><circle cx="18" cy="17" r="3"/></svg>
+        <h3>Orthopedics</h3>
+        <p>Joint pain, sports injuries, and physiotherapy referrals under one care plan.</p>
+      </div>
+      <div class="service-card reveal">
+        <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3 3 3 6 0 8-3-2-3-5 0-8z"/><path d="M6 12c0 5 3 9 6 9s6-4 6-9"/></svg>
+        <h3>Dental Care</h3>
+        <p>Cleanings, fillings, and cosmetic consultations in a dedicated dental suite.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY CHOOSE US ================= -->
+<section id="why">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Why choose Meridian</div>
+      <h2>Four things patients mention most</h2>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-item"><div class="why-num">A</div><h4>Real appointment times</h4><p>What you book is what you get — average wait under 9 minutes past your slot.</p></div>
+      <div class="why-item"><div class="why-num">B</div><h4>Specialists on-site</h4><p>No off-site referrals for the six core departments — everyone works from the same building.</p></div>
+      <div class="why-item"><div class="why-num">C</div><h4>Clear billing</h4><p>Fees are listed per doctor before you book, including insurance-accepted plans.</p></div>
+      <div class="why-item"><div class="why-num">D</div><h4>Digital records</h4><p>Access your visit history and prescriptions any time through the patient portal.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DOCTORS ================= -->
+<section id="doctors" class="bg-alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Meet the doctors</div>
+      <h2>Specialists our patients ask for by name</h2>
+      <p>A small sample of the team — every doctor profile includes experience, consultation fee, and next available slot.</p>
+    </div>
+    <div class="doctors-grid">
+      <div class="doctor-card reveal">
+        <div class="doctor-top">
+          <div class="avatar" style="background:#1B4B43;">RS</div>
+          <div><h3>Dr. Rhea Sen</h3><div class="spec">General Medicine</div></div>
+        </div>
+        <div class="doctor-body">
+          <p>12 years experience. Focus on chronic condition management and preventive screening.</p>
+          <div class="doctor-tags"><span class="tag">Mon–Fri</span><span class="tag">$40 / visit</span></div>
+        </div>
+      </div>
+      <div class="doctor-card reveal">
+        <div class="doctor-top">
+          <div class="avatar" style="background:#E15B4F;">AK</div>
+          <div><h3>Dr. Arjun Kapoor</h3><div class="spec">Cardiology</div></div>
+        </div>
+        <div class="doctor-body">
+          <p>16 years experience. Specializes in preventive cardiology and long-term monitoring.</p>
+          <div class="doctor-tags"><span class="tag">Tue–Sat</span><span class="tag">$70 / visit</span></div>
+        </div>
+      </div>
+      <div class="doctor-card reveal">
+        <div class="doctor-top">
+          <div class="avatar" style="background:#6B7D77;">NP</div>
+          <div><h3>Dr. Nina Park</h3><div class="spec">Pediatrics</div></div>
+        </div>
+        <div class="doctor-body">
+          <p>9 years experience. Known for a calm, kid-first approach to checkups and vaccines.</p>
+          <div class="doctor-tags"><span class="tag">Mon–Sat</span><span class="tag">$35 / visit</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section id="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Patient testimonials</div>
+      <h2>What people say after their visit</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-mark">"</div>
+        <p class="body">I booked a same-week cardiology appointment and actually got seen on time. First clinic where that's happened.</p>
+        <div class="testi-who"><div class="mini-avatar">JM</div><div><div class="name">Jordan M.</div><div class="role">Patient since 2022</div></div></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-mark">"</div>
+        <p class="body">Dr. Park was fantastic with my daughter. The whole pediatric wing feels designed for kids, not just adults.</p>
+        <div class="testi-who"><div class="mini-avatar">SL</div><div><div class="name">Sara L.</div><div class="role">Parent, patient since 2021</div></div></div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-mark">"</div>
+        <p class="body">The pricing was clear before I even booked. No surprise bill, which hasn't been my experience elsewhere.</p>
+        <div class="testi-who"><div class="mini-avatar">DT</div><div><div class="name">Devon T.</div><div class="role">Patient since 2023</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="pulse-divider"><svg viewBox="0 0 1200 34" preserveAspectRatio="none"><path class="pulse-path" d="M0 17 H420 L455 4 L490 30 L520 17 H1200" stroke="#1B4B43"/></svg></div>
+
+<!-- ================= CONTACT / APPOINTMENT FORM ================= -->
+<section id="contact" class="bg-alt">
+  <div class="wrap contact-grid">
+    <div class="contact-info reveal">
+      <div class="eyebrow">Get in touch</div>
+      <h2>Request an appointment</h2>
+      <p>Fill out the enquiry form and our front desk will confirm your slot within one business day. For urgent concerns, call us directly.</p>
+
+      <div class="info-row">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5a2 2 0 012-2h2.2a1 1 0 011 .8l1 4a1 1 0 01-.5 1.1l-1.7 1a12 12 0 006 6l1-1.7a1 1 0 011.1-.5l4 1a1 1 0 01.8 1V19a2 2 0 01-2 2h-1C9.6 21 3 14.4 3 6z"/></svg>
+        <div><h4>(555) 019-2200</h4><p>Mon–Sat, 8:00 AM – 7:00 PM</p></div>
+      </div>
+      <div class="info-row">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+        <div><h4>care@meridianclinic.example</h4><p>Replies within one business day</p></div>
+      </div>
+      <div class="info-row">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-5.6-7-11a7 7 0 0114 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+        <div><h4>418 Willowmere Ave, Springfield</h4><p>Free patient parking on-site</p></div>
+      </div>
+
+      <div class="map-frame">
+        <iframe src="https://www.google.com/maps?q=Springfield&output=embed" loading="lazy" title="Clinic location map"></iframe>
+      </div>
+    </div>
+
+    <div class="form-card reveal">
+      <h3>Appointment enquiry</h3>
+      <p class="sub">All fields marked with * are required.</p>
+      <form id="apptForm" novalidate>
+        <div class="form-row">
+          <div class="field full">
+            <label for="patientName">Patient name *</label>
+            <input type="text" id="patientName" name="patientName" placeholder="Jordan Miller" autocomplete="name">
+            <span class="error-msg" id="err-patientName"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="email">Email address *</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+            <span class="error-msg" id="err-email"></span>
+          </div>
+          <div class="field">
+            <label for="phone">Phone number *</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 019-2200" autocomplete="tel">
+            <span class="error-msg" id="err-phone"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field full">
+            <label for="department">Preferred department *</label>
+            <select id="department" name="department">
+              <option value="">Select a department</option>
+              <option value="general">General Medicine</option>
+              <option value="pediatrics">Pediatrics</option>
+              <option value="cardiology">Cardiology</option>
+              <option value="dermatology">Dermatology</option>
+              <option value="orthopedics">Orthopedics</option>
+              <option value="dental">Dental Care</option>
+            </select>
+            <span class="error-msg" id="err-department"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field full">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" placeholder="Briefly describe your reason for visiting..."></textarea>
+            <span class="error-msg" id="err-message"></span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Submit enquiry</button>
+        <div class="form-success" id="formSuccess">Thanks — your enquiry has been received. Our front desk will confirm your slot by email or phone within one business day.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="15" stroke="#fff" stroke-width="1.5" opacity="0.4"/>
+            <path d="M4 16h6l2-7 4 14 3-10 2 3h7" stroke="#E15B4F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          Meridian
+        </div>
+        <p>A clinic built around continuity of care — one record, every department, every visit.</p>
+      </div>
+      <div>
+        <h5>Departments</h5>
+        <div class="flinks">
+          <a href="#services">General Medicine</a>
+          <a href="#services">Pediatrics</a>
+          <a href="#services">Cardiology</a>
+          <a href="#services">Dermatology</a>
+        </div>
+      </div>
+      <div>
+        <h5>Clinic</h5>
+        <div class="flinks">
+          <a href="#about">About us</a>
+          <a href="#doctors">Our doctors</a>
+          <a href="#testimonials">Testimonials</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <div class="flinks">
+          <a href="tel:5550192200">(555) 019-2200</a>
+          <a href="mailto:care@meridianclinic.example">care@meridianclinic.example</a>
+          <a href="#contact">418 Willowmere Ave</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Meridian Health Clinic. Built for the iNeuBytes VIIP Web Development internship (WBINB20726).</span>
+      <span>Task 1 — Healthcare / Clinic Landing Page</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Mobile nav toggle ----
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    burger.classList.toggle('active');
+  });
+  document.querySelectorAll('.nav-close').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  // ---- Smooth scroll (native scroll-behavior handles most; this offsets sticky header) ----
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        const headerH = document.querySelector('header').offsetHeight;
+        const top = target.getBoundingClientRect().top + window.pageYOffset - headerH + 1;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ---- Scroll reveal ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ---- Appointment form validation ----
+  const form = document.getElementById('apptForm');
+  const successBox = document.getElementById('formSuccess');
+
+  const validators = {
+    patientName: (v) => v.trim().length >= 2 ? '' : 'Enter your full name (min 2 characters).',
+    email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Enter a valid email address.',
+    phone: (v) => /^[0-9+()\-\s]{7,15}$/.test(v.trim()) ? '' : 'Enter a valid phone number.',
+    department: (v) => v ? '' : 'Please select a department.',
+    message: (v) => v.trim().length >= 10 ? '' : 'Message should be at least 10 characters.'
+  };
+
+  function validateField(name) {
+    const field = document.getElementById(name);
+    const errorEl = document.getElementById('err-' + name);
+    const message = validators[name](field.value);
+    if (message) {
+      field.classList.add('invalid');
+      errorEl.textContent = message;
+    } else {
+      field.classList.remove('invalid');
+      errorEl.textContent = '';
+    }
+    return !message;
+  }
+
+  Object.keys(validators).forEach(name => {
+    const field = document.getElementById(name);
+    field.addEventListener('blur', () => validateField(name));
+    field.addEventListener('input', () => {
+      if (field.classList.contains('invalid')) validateField(name);
+    });
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    successBox.classList.remove('show');
+    let allValid = true;
+    Object.keys(validators).forEach(name => {
+      if (!validateField(name)) allValid = false;
+    });
+    if (allValid) {
+      successBox.classList.add('show');
+      form.reset();
+      successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      const firstInvalid = form.querySelector('.invalid');
+      if (firstInvalid) firstInvalid.focus();
+    }
+  });
+</script>
+
+</body>
+</html>

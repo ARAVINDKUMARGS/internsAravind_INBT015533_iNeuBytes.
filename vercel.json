@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "internsAravind_INBT015533_iNeuBytes-main/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "internsAravind_INBT015533_iNeuBytes-main/css/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "internsAravind_INBT015533_iNeuBytes-main/js/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/internsAravind_INBT015533_iNeuBytes-main/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/internsAravind_INBT015533_iNeuBytes-main/js/$1"
+    },
+    {
+      "src": "/(.*\\.html)",
+      "dest": "/internsAravind_INBT015533_iNeuBytes-main/$1"
+    },
+    {
+      "src": "/$",
+      "dest": "/internsAravind_INBT015533_iNeuBytes-main/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/internsAravind_INBT015533_iNeuBytes-main/$1"
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Health Clinic — Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="15" stroke="#fff" stroke-width="1.5" opacity="0.35"/><path d="M4 16h6l2-7 4 14 3-10 2 3h7" stroke="#E15B4F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      Meridian Admin
+      <button class="sidebar-close" id="sidebarClose">✕</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link route-link" data-route="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="12" width="8" height="9" rx="2"/><rect x="3" y="14" width="8" height="7" rx="2"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-link route-link" data-route="doctors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3v4a3 3 0 006 0V3M6 3v5a6 6 0 0012 0V3"/><circle cx="12" cy="17" r="4"/></svg>
+        Doctors
+      </a>
+      <a class="sidebar-link route-link" data-route="patients">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 21c0-4 3.1-7 7-7s7 3 7 7"/></svg>
+        Patients
+      </a>
+      <a class="sidebar-link route-link" data-route="departments">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6M9 11h.01M15 11h.01M9 15h.01M15 15h.01"/></svg>
+        Departments
+      </a>
+      <a class="sidebar-link route-link" data-route="appointments">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        Appointments
+      </a>
+    </nav>
+    <div class="sidebar-foot">WBINB20726 · Admin Dashboard</div>
+  </aside>
+
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button class="menu-toggle" id="menuToggle">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="sub" id="pageSub">Overview of clinic operations</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="profile-chip">
+          <div class="profile-avatar">AK</div>
+          <div class="profile-meta">
+            <div class="pname">Aisha Khan</div>
+            <div class="prole">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ============ DASHBOARD HOME ============ -->
+      <section class="view active" id="view-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="label">Total Doctors</div><div class="num" id="statDoctors">0</div><div class="delta">Across all departments</div></div>
+          <div class="stat-card"><div class="label">Total Patients</div><div class="num" id="statPatients">0</div><div class="delta">Registered in system</div></div>
+          <div class="stat-card"><div class="label">Total Appointments</div><div class="num" id="statAppointments">0</div><div class="delta" id="statApptDelta">—</div></div>
+          <div class="stat-card"><div class="label">Departments</div><div class="num" id="statDepartments">0</div><div class="delta">Active departments</div></div>
+        </div>
+        <div class="dash-grid">
+          <div class="panel">
+            <h3>Doctors per department</h3>
+            <div id="deptBars"></div>
+          </div>
+          <div class="panel">
+            <h3>Recent appointments</h3>
+            <div id="recentAppts"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DOCTORS ============ -->
+      <section class="view" id="view-doctors">
+        <div class="toolbar">
+          <input type="text" id="doctorSearch" placeholder="Search doctors by name...">
+          <select id="doctorDeptFilter"><option value="">All departments</option></select>
+          <div class="spacer"></div>
+          <button class="btn btn-primary" onclick="openModal('doctor')">+ Add Doctor</button>
+        </div>
+        <div class="table-wrap"><div class="table-scroll">
+          <table>
+            <thead><tr><th>Name</th><th>Department</th><th>Experience</th><th>Fee</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead>
+            <tbody id="doctorsTableBody"></tbody>
+          </table>
+        </div></div>
+      </section>
+
+      <!-- ============ PATIENTS ============ -->
+      <section class="view" id="view-patients">
+        <div class="toolbar">
+          <input type="text" id="patientSearch" placeholder="Search patients by name...">
+          <div class="spacer"></div>
+          <button class="btn btn-primary" onclick="openModal('patient')">+ Add Patient</button>
+        </div>
+        <div class="table-wrap"><div class="table-scroll">
+          <table>
+            <thead><tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Email</th><th>Address</th><th>Actions</th></tr></thead>
+            <tbody id="patientsTableBody"></tbody>
+          </table>
+        </div></div>
+      </section>
+
+      <!-- ============ DEPARTMENTS ============ -->
+      <section class="view" id="view-departments">
+        <div class="toolbar">
+          <input type="text" id="deptSearch" placeholder="Search departments...">
+          <div class="spacer"></div>
+          <button class="btn btn-primary" onclick="openModal('department')">+ Add Department</button>
+        </div>
+        <div class="table-wrap"><div class="table-scroll">
+          <table>
+            <thead><tr><th>Department</th><th>Head Doctor</th><th>Doctors</th><th>Description</th><th>Actions</th></tr></thead>
+            <tbody id="departmentsTableBody"></tbody>
+          </table>
+        </div></div>
+      </section>
+
+      <!-- ============ APPOINTMENTS ============ -->
+      <section class="view" id="view-appointments">
+        <div class="toolbar">
+          <input type="text" id="apptSearch" placeholder="Search by patient or doctor...">
+          <select id="apptStatusFilter">
+            <option value="">All statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <div class="spacer"></div>
+          <button class="btn btn-primary" onclick="openModal('appointment')">+ Add Appointment</button>
+        </div>
+        <div class="table-wrap"><div class="table-scroll">
+          <table>
+            <thead><tr><th>Patient</th><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="appointmentsTableBody"></tbody>
+          </table>
+        </div></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= FORM MODAL ================= -->
+<div class="modal-overlay" id="formModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Add</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <form id="entityForm" novalidate>
+      <div class="form-grid" id="formFields"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= CONFIRM DELETE MODAL ================= -->
+<div class="modal-overlay confirm-modal" id="confirmModalOverlay">
+  <div class="modal">
+    <h3>Delete this record?</h3>
+    <p>This action can't be undone. The record will be permanently removed.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn btn-primary" id="confirmDeleteBtn" style="background:var(--coral-deep);">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

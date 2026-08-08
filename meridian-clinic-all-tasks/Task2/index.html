@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Health Clinic — Doctor Appointment Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <nav>
+    <a data-route="home" class="logo route-link">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="15" stroke="#1B4B43" stroke-width="1.5"/>
+        <path d="M4 16h6l2-7 4 14 3-10 2 3h7" stroke="#E15B4F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Meridian
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a data-route="home" class="route-link nav-close">Home</a></li>
+      <li><a data-route="doctors" class="route-link nav-close">Find a Doctor</a></li>
+      <li><a data-route="history" class="route-link nav-close">My Appointments</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a data-route="doctors" class="btn btn-primary route-link">Book Appointment</a>
+      <button class="burger" id="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ HOME VIEW ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Doctor Appointment Booking</div>
+        <h1>Find the right doctor, <em>book in minutes</em>.</h1>
+        <p class="lead">Search by name or department, compare experience and fees, and pick a slot that actually fits your week — no phone calls required.</p>
+        <a data-route="doctors" class="btn btn-primary route-link">Browse all doctors</a>
+        <div class="stats-row">
+          <div><div class="stat-num" id="statDoctors">—</div><div class="stat-label">Doctors available</div></div>
+          <div><div class="stat-num">6</div><div class="stat-label">Departments</div></div>
+          <div><div class="stat-num">3 min</div><div class="stat-label">Avg. booking time</div></div>
+        </div>
+      </div>
+      <div class="search-card">
+        <h3>Quick search</h3>
+        <div class="search-row">
+          <input type="text" id="homeSearchInput" placeholder="Search doctor name...">
+        </div>
+        <select id="homeDeptSelect">
+          <option value="">All departments</option>
+        </select>
+        <a data-route="doctors" class="btn btn-primary route-link" id="homeSearchBtn" style="width:100%; margin-top:14px;">Search doctors</a>
+        <div class="dept-chip-row" id="homeChips"></div>
+      </div>
+    </div>
+
+    <div class="featured-head">
+      <h2>Popular doctors this week</h2>
+      <a data-route="doctors" class="btn-text route-link">View all →</a>
+    </div>
+    <div class="doctors-grid" id="featuredGrid"></div>
+  </section>
+
+  <!-- ============ DOCTOR LISTING VIEW ============ -->
+  <section class="view" id="view-doctors">
+    <div class="page-head">
+      <div class="eyebrow">Find a doctor</div>
+      <h1>Browse by name or department</h1>
+      <p>Every profile shows years of experience, consultation fee, and real available time slots.</p>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="listSearchInput" placeholder="Search by doctor name...">
+    </div>
+    <div class="dept-chip-row" id="listChips" style="margin-bottom:8px;"></div>
+    <div class="result-count" id="resultCount"></div>
+    <div class="doctors-grid" id="listGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <h3>No doctors match your search</h3>
+      <p>Try a different name or clear the department filter.</p>
+    </div>
+  </section>
+
+  <!-- ============ DOCTOR PROFILE VIEW ============ -->
+  <section class="view" id="view-profile">
+    <a data-route="doctors" class="btn-text route-link" style="display:inline-block; margin-bottom:24px;">← Back to all doctors</a>
+    <div class="profile-grid" id="profileContent"></div>
+  </section>
+
+  <!-- ============ BOOKING FORM VIEW ============ -->
+  <section class="view" id="view-book">
+    <div class="page-head">
+      <div class="eyebrow">Appointment booking</div>
+      <h1>Confirm your details</h1>
+      <p>Double check your selected doctor, date and time, then fill in your patient details to confirm.</p>
+    </div>
+    <div class="booking-grid">
+      <div class="summary-card" id="bookingSummary"></div>
+      <div class="form-card">
+        <form id="bookingForm" novalidate>
+          <div class="form-row">
+            <div class="field full">
+              <label for="pName">Patient name *</label>
+              <input type="text" id="pName" placeholder="Jordan Miller">
+              <span class="error-msg" id="err-pName"></span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="pEmail">Email address *</label>
+              <input type="email" id="pEmail" placeholder="you@example.com">
+              <span class="error-msg" id="err-pEmail"></span>
+            </div>
+            <div class="field">
+              <label for="pPhone">Phone number *</label>
+              <input type="tel" id="pPhone" placeholder="(555) 019-2200">
+              <span class="error-msg" id="err-pPhone"></span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field full">
+              <label for="pNotes">Reason for visit (optional)</label>
+              <textarea id="pNotes" rows="3" placeholder="Briefly describe your symptoms or reason for the visit..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Confirm appointment</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONFIRMATION VIEW ============ -->
+  <section class="view" id="view-confirm">
+    <div class="confirm-wrap">
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h1 style="color:var(--pine-deep); font-size:1.8rem;">Appointment confirmed</h1>
+      <p style="color:var(--sage); margin-top:10px;">A confirmation has been saved to your appointment history below.</p>
+      <div class="confirm-card" id="confirmCard"></div>
+      <div class="confirm-actions">
+        <a data-route="history" class="btn btn-primary route-link">View my appointments</a>
+        <a data-route="doctors" class="btn btn-ghost route-link">Book another</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HISTORY VIEW ============ -->
+  <section class="view" id="view-history">
+    <div class="page-head">
+      <div class="eyebrow">Appointment history</div>
+      <h1>My appointments</h1>
+      <p>Saved locally in this browser. Cancel a booking to remove it from your history.</p>
+    </div>
+    <div class="history-list" id="historyList"></div>
+    <div class="empty-state" id="historyEmpty" style="display:none;">
+      <h3>No appointments yet</h3>
+      <p>Once you book an appointment, it will appear here.</p>
+      <a data-route="doctors" class="btn btn-primary route-link" style="margin-top:16px;">Find a doctor</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Meridian Health Clinic · Task 2 — Doctor Appointment Booking System · iNeuBytes VIIP (WBINB20726)</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
