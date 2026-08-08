@@ -1,23 +1,12 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "healthcare-management-system/backend/server.js",
-      "use": "@vercel/node"
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
     {
-      "src": "healthcare-management-system/frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "healthcare-management-system/backend/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "healthcare-management-system/frontend/$1"
+      "source": "/(.*)",
+      "destination": "/healthcare-management-system/frontend/$1"
     }
   ]
 }
