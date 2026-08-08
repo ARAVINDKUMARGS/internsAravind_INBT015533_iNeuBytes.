@@ -1,9 +1,27 @@
 {
   "version": 2,
+  "cleanUrls": true,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "internsAravind_INBT015533_iNeuBytes-main/**"
+    }
+  },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/css/(.*)",
+      "destination": "/internsAravind_INBT015533_iNeuBytes-main/css/$1"
+    },
+    {
+      "source": "/js/(.*)",
+      "destination": "/internsAravind_INBT015533_iNeuBytes-main/js/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/internsAravind_INBT015533_iNeuBytes-main/$1"
     }
   ]
 }
