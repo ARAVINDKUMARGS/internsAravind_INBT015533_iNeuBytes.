@@ -30,7 +30,38 @@ app.use((req, res, next) => {
 // Serve the frontend (static HTML/CSS/JS) directly from the backend for easy local demo
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
+const db = require('./config/db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+function signToken(payload) {
+  return jwt.sign(payload, process.env.JWT_SECRET || 'wellframe_secret_key_2026_dev', { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
+}
+
 // API routes
+app.post(['/api/auth/login', '/auth/login', '/login'], async (req, res) => {
+  const { email, password } = req.body || {};
+  if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+
+  try {
+    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    const user = rows[0];
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const valid = bcrypt.compareSync(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const token = signToken({ id: user.id, role: user.role, name: user.name, email: user.email });
+    res.json({
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Login failed', message: err.message, stack: err.stack });
+  }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/departments', departmentRoutes);
