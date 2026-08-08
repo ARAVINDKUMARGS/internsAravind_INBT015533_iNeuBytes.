@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellframe Clinic — Healthcare & Clinic Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#17847a"/><path d="M6 16h5l2-6 4 12 3-8 2 2h4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Wellframe Clinic
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#doctors">Doctors</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="register.html" class="btn btn-primary btn-sm">Book appointment</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Healthcare & Clinic Management System</span>
+      <h1>Care that keeps pace with your heartbeat.</h1>
+      <p class="lead">Wellframe Clinic brings patients, doctors and administrators onto one connected platform — book appointments in seconds, manage consultations with ease, and keep every department running smoothly.</p>
+      <div class="hero-actions">
+        <a href="register.html" class="btn btn-primary">Book an appointment</a>
+        <a href="#services" class="btn btn-outline">Explore services</a>
+      </div>
+    </div>
+    <div class="pulse-wrap">
+      <svg viewBox="0 0 360 120" preserveAspectRatio="none">
+        <path class="pulse-line" d="M0,60 L60,60 L80,30 L100,90 L120,10 L140,100 L160,60 L200,60 L215,45 L230,75 L245,60 L360,60"/>
+      </svg>
+      <div class="pulse-stats">
+        <div class="pulse-stat"><b>5+</b><span>Departments</span></div>
+        <div class="pulse-stat"><b>24/7</b><span>Patient support</span></div>
+        <div class="pulse-stat"><b>45min</b><span>Avg. wait time</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="about">
+  <div class="container">
+    <div class="grid-2" style="align-items:center;">
+      <div>
+        <span class="eyebrow">About the clinic</span>
+        <h2>A calmer way to manage your care.</h2>
+        <p>Wellframe Clinic was built to remove the friction from healthcare — no more waiting on hold to book a slot, or hunting for a doctor's availability. Our platform connects patients with the right specialist, gives doctors a clear view of their schedule, and gives administrators the tools to run the clinic with confidence.</p>
+        <p>Every appointment, record and department is organised in one place — secure, responsive, and built around the people who use it.</p>
+      </div>
+      <div class="card">
+        <div class="grid-2">
+          <div><div class="stat-card"><div class="n">12k+</div><div class="label">Patients served</div></div></div>
+          <div><div class="stat-card"><div class="n">40+</div><div class="label">Specialist doctors</div></div></div>
+          <div><div class="stat-card"><div class="n">99.2%</div><div class="label">Uptime</div></div></div>
+          <div><div class="stat-card"><div class="n">4.8/5</div><div class="label">Patient rating</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services" style="background:var(--mint-100);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Medical services</span>
+      <h2>Departments built around real specialities</h2>
+    </div>
+    <div class="grid-3" id="services-grid">
+      <div class="card service-card"><div class="icon">🫀</div><h3>Cardiology</h3><p>Heart health checkups, ECGs and long-term cardiac care from senior specialists.</p></div>
+      <div class="card service-card"><div class="icon">🩺</div><h3>General Medicine</h3><p>Everyday health concerns, checkups and preventive care for the whole family.</p></div>
+      <div class="card service-card"><div class="icon">🧴</div><h3>Dermatology</h3><p>Skin, hair and nail treatment with cosmetic and clinical dermatology options.</p></div>
+      <div class="card service-card"><div class="icon">🧸</div><h3>Pediatrics</h3><p>Gentle, attentive care for infants, children and adolescents.</p></div>
+      <div class="card service-card"><div class="icon">🦴</div><h3>Orthopedics</h3><p>Bone, joint and muscle care — from sports injuries to joint replacement.</p></div>
+      <div class="card service-card"><div class="icon">📅</div><h3>Online Booking</h3><p>Browse doctors by department and book a confirmed slot in under a minute.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Why choose us</span>
+      <h2>Designed around trust and speed</h2>
+    </div>
+    <div class="grid-4">
+      <div class="card"><h3 style="font-size:1.05rem;">Verified specialists</h3><p>Every doctor profile lists real experience and consultation fees upfront.</p></div>
+      <div class="card"><h3 style="font-size:1.05rem;">Instant confirmation</h3><p>Appointment status updates the moment your doctor responds.</p></div>
+      <div class="card"><h3 style="font-size:1.05rem;">Secure records</h3><p>Your medical history and profile stay private and encrypted.</p></div>
+      <div class="card"><h3 style="font-size:1.05rem;">Any device</h3><p>Fully responsive across mobile, tablet and desktop.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="doctors" style="background:var(--mint-100);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Meet the doctors</span>
+      <h2>Specialists ready to see you</h2>
+    </div>
+    <div class="grid-4" id="doctors-grid">
+      <div class="card text-center"><p class="muted">Loading doctors…</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="testimonials">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Patient testimonials</span>
+      <h2>What patients say</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card testimonial"><p>"Booking a cardiology appointment took less than two minutes. I got a confirmation the same evening."</p><p class="who">— Meera S., Chennai</p></div>
+      <div class="card testimonial"><p>"The doctor's dashboard made it so easy to keep track of my consultations for the week."</p><p class="who">— Dr. Karthik Iyer, Orthopedics</p></div>
+      <div class="card testimonial"><p>"As a clinic admin, having every department's stats on one screen has saved me hours every week."</p><p class="who">— Clinic Administrator</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact" style="background:var(--mint-100);">
+  <div class="container">
+    <div class="grid-2">
+      <div class="card form-card wide">
+        <span class="eyebrow">Appointment enquiry</span>
+        <h2 style="margin-bottom:6px;">Not ready to register? Send us an enquiry</h2>
+        <p>Fill this out and our team will call you back to schedule your visit.</p>
+        <div id="enquiry-msg"></div>
+        <form id="enquiry-form" novalidate>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="e-name">Patient name</label>
+              <input id="e-name" name="patient_name" required minlength="2" placeholder="Full name">
+            </div>
+            <div class="form-row">
+              <label for="e-email">Email address</label>
+              <input id="e-email" name="email" type="email" required placeholder="you@email.com">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label for="e-phone">Phone number</label>
+              <input id="e-phone" name="phone" type="tel" required pattern="[0-9]{10}" placeholder="10-digit number">
+            </div>
+            <div class="form-row">
+              <label for="e-dept">Preferred department</label>
+              <select id="e-dept" name="department">
+                <option value="">Select a department</option>
+                <option>Cardiology</option><option>Dermatology</option><option>Pediatrics</option>
+                <option>Orthopedics</option><option>General Medicine</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="e-msg">Message</label>
+            <textarea id="e-msg" name="message" placeholder="Tell us briefly what you need help with"></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Send enquiry</button>
+        </form>
+      </div>
+      <div>
+        <span class="eyebrow">Visit us</span>
+        <h2>Find the clinic</h2>
+        <p><strong>Address:</strong> 12 Anna Salai, Chennai, Tamil Nadu 600002<br>
+        <strong>Phone:</strong> +91 98765 43210<br>
+        <strong>Email:</strong> care@wellframeclinic.com<br>
+        <strong>Hours:</strong> Mon–Sat, 8:00 AM – 8:00 PM</p>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <iframe title="Clinic location map" src="https://maps.google.com/maps?q=Anna%20Salai%2C%20Chennai&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="280" style="border:0;" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="brand" style="color:#fff;">Wellframe Clinic</div>
+      <p style="color:rgba(255,255,255,.65); max-width:34ch;">A connected healthcare and clinic management platform for patients, doctors and administrators.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <ul class="mt-16"><li class="mt-8"><a href="#about">About</a></li><li class="mt-8"><a href="#services">Services</a></li><li class="mt-8"><a href="#doctors">Doctors</a></li></ul>
+    </div>
+    <div>
+      <h4>Account</h4>
+      <ul class="mt-16"><li class="mt-8"><a href="login.html">Log in</a></li><li class="mt-8"><a href="register.html">Register</a></li></ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul class="mt-16"><li class="mt-8">care@wellframeclinic.com</li><li class="mt-8">+91 98765 43210</li></ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© 2026 Wellframe Clinic. iNeuBytes VIIP Major Project.</span>
+    <span>Course ID: WBINB20726</span>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script>
+// Load doctor highlights dynamically from the API
+(async function loadDoctors() {
+  const grid = document.getElementById('doctors-grid');
+  try {
+    const doctors = await api('/doctors', { auth: false });
+    if (!doctors.length) { grid.innerHTML = '<p class="muted text-center">Doctor listings coming soon.</p>'; return; }
+    grid.innerHTML = doctors.slice(0, 4).map(d => `
+      <div class="card doctor-card">
+        <div class="doctor-avatar">${initials(d.name)}</div>
+        <h3 style="font-size:1rem;">${d.name}</h3>
+        <div class="role">${d.department_name || 'General'}</div>
+        <div class="meta">${d.experience_years} yrs experience · ₹${d.consultation_fee}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    grid.innerHTML = '<p class="muted text-center">Could not load doctors right now.</p>';
+  }
+})();
+
+// Client-side validated enquiry form submission
+document.getElementById('enquiry-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const msgHost = document.getElementById('enquiry-msg');
+  msgHost.innerHTML = '';
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+  const payload = {
+    patient_name: form.patient_name.value.trim(),
+    email: form.email.value.trim(),
+    phone: form.phone.value.trim(),
+    department: form.department.value,
+    message: form.message.value.trim(),
+  };
+  const btn = form.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const res = await api('/enquiries', { method: 'POST', body: payload, auth: false });
+    msgHost.innerHTML = `<div class="form-msg success">${res.message}</div>`;
+    form.reset();
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send enquiry';
+  }
+});
+</script>
+</body>
+</html>

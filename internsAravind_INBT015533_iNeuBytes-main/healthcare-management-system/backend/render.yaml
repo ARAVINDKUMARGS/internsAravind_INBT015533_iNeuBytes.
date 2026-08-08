@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: hospital-management-system-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USER
+        value: aravindkumar06062006@gmail.com
+      - key: EMAIL_PASS
+        value: htvnkadxyynesvda
+      - key: EMAIL_FROM
+        value: '"Wellframe Clinic" <aravindkumar06062006@gmail.com>'
+      - key: FRONTEND_URL
+        value: https://hospital-management-system-frontend.vercel.app
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d

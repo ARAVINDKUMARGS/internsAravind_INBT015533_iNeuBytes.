@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Dashboard — Wellframe Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="dash-shell">
+  <aside class="sidebar">
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#ff6b53"/><path d="M6 16h5l2-6 4 12 3-8 2 2h4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Wellframe</div>
+    <div class="side-section">Menu</div>
+    <a class="side-link active" data-tab="home">🏠 Home</a>
+    <a class="side-link" data-tab="book">📅 Book appointment</a>
+    <a class="side-link" data-tab="history">🗂 Appointment history</a>
+    <a class="side-link" data-tab="profile">👤 My profile</a>
+    <div class="side-section">Account</div>
+    <a class="side-link" id="logout-link">↩ Log out</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1 id="page-title">Welcome back</h1>
+      <div class="user-pill" id="user-pill"></div>
+    </div>
+
+    <!-- HOME -->
+    <section id="tab-home">
+      <div class="grid-3">
+        <div class="stat-card"><div class="n" id="stat-upcoming">–</div><div class="label">Upcoming appointments</div></div>
+        <div class="stat-card"><div class="n" id="stat-completed">–</div><div class="label">Completed visits</div></div>
+        <div class="stat-card"><div class="n" id="stat-pending">–</div><div class="label">Pending confirmation</div></div>
+      </div>
+      <div class="mt-24 table-wrap">
+        <div class="table-toolbar"><strong>Recent appointments</strong></div>
+        <div id="home-recent"></div>
+      </div>
+    </section>
+
+    <!-- BOOK APPOINTMENT -->
+    <section id="tab-book" class="hidden">
+      <div class="grid-2">
+        <div class="card">
+          <h3>1. Choose a department & doctor</h3>
+          <div class="form-row">
+            <label for="dept-filter">Department</label>
+            <select id="dept-filter"><option value="">All departments</option></select>
+          </div>
+          <div id="doctor-list" class="mt-16"></div>
+        </div>
+        <div class="card">
+          <h3>2. Pick date & time slot</h3>
+          <div id="booking-form-host">
+            <p class="muted">Select a doctor to continue.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="tab-history" class="hidden">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <strong>Your appointments</strong>
+          <select id="history-filter" style="max-width:180px;">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="tab-profile" class="hidden">
+      <div class="card form-card wide">
+        <h3>My profile</h3>
+        <div id="profile-msg"></div>
+        <form id="profile-form">
+          <div class="form-grid-2">
+            <div class="form-row"><label>Full name</label><input name="name" required></div>
+            <div class="form-row"><label>Phone</label><input name="phone" required></div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row"><label>Date of birth</label><input name="date_of_birth" type="date"></div>
+            <div class="form-row"><label>Gender</label>
+              <select name="gender"><option value="">—</option><option>Male</option><option>Female</option><option>Other</option></select>
+            </div>
+          </div>
+          <div class="form-row"><label>Address</label><input name="address"></div>
+          <div class="form-row"><label>Medical history</label><textarea name="medical_history" placeholder="Allergies, chronic conditions, previous surgeries…"></textarea></div>
+          <button class="btn btn-primary" type="submit">Save changes</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+const user = Auth.requireRole(['patient']);
+renderUserPill('user-pill');
+let PATIENT_ID = null, ALL_DOCTORS = [], SELECTED_DOCTOR = null, SELECTED_SLOT = null;
+
+qsa('.side-link[data-tab]').forEach(link => {
+  link.addEventListener('click', () => switchTab(link.dataset.tab));
+});
+document.getElementById('logout-link').addEventListener('click', () => Auth.logout());
+
+function switchTab(tab) {
+  qsa('.side-link[data-tab]').forEach(l => l.classList.toggle('active', l.dataset.tab === tab));
+  ['home','book','history','profile'].forEach(t => document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab));
+  const titles = { home: 'Welcome back', book: 'Book an appointment', history: 'Appointment history', profile: 'My profile' };
+  document.getElementById('page-title').textContent = titles[tab];
+  if (tab === 'history') loadHistory();
+}
+
+async function init() {
+  const me = await api('/auth/me');
+  PATIENT_ID = me.profile.id;
+  document.getElementById('profile-form').name.value = me.name;
+  document.getElementById('profile-form').phone.value = me.phone || '';
+  document.getElementById('profile-form').date_of_birth.value = me.profile.date_of_birth || '';
+  document.getElementById('profile-form').gender.value = me.profile.gender || '';
+  document.getElementById('profile-form').address.value = me.profile.address || '';
+  document.getElementById('profile-form').medical_history.value = me.profile.medical_history || '';
+
+  const departments = await api('/departments');
+  const sel = document.getElementById('dept-filter');
+  departments.forEach(d => sel.insertAdjacentHTML('beforeend', `<option value="${d.id}">${d.name}</option>`));
+  sel.addEventListener('change', renderDoctorList);
+
+  ALL_DOCTORS = await api('/doctors');
+  renderDoctorList();
+  loadHome();
+}
+
+function renderDoctorList() {
+  const deptId = document.getElementById('dept-filter').value;
+  const list = deptId ? ALL_DOCTORS.filter(d => String(d.department_id) === deptId) : ALL_DOCTORS;
+  const host = document.getElementById('doctor-list');
+  if (!list.length) { host.innerHTML = '<p class="muted">No doctors in this department.</p>'; return; }
+  host.innerHTML = list.map(d => `
+    <div class="card" style="padding:14px; margin-bottom:10px; cursor:pointer;" data-doc="${d.id}">
+      <strong>${d.name}</strong> <span class="muted">— ${d.department_name}</span>
+      <div class="muted mt-8">${d.experience_years} yrs experience · ₹${d.consultation_fee} consultation</div>
+    </div>
+  `).join('');
+  qsa('[data-doc]', host).forEach(el => el.addEventListener('click', () => selectDoctor(Number(el.dataset.doc))));
+}
+
+function selectDoctor(id) {
+  SELECTED_DOCTOR = ALL_DOCTORS.find(d => d.id === id);
+  SELECTED_SLOT = null;
+  const slots = JSON.parse(SELECTED_DOCTOR.available_slots || '[]');
+  const host = document.getElementById('booking-form-host');
+  host.innerHTML = `
+    <p><strong>${SELECTED_DOCTOR.name}</strong> — ${SELECTED_DOCTOR.department_name}</p>
+    <div class="form-row"><label>Appointment date</label><input type="date" id="appt-date" min="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="form-row"><label>Available time slots</label>
+      <div class="slot-grid" id="slot-grid">${slots.map(s => `<div class="slot" data-slot="${s}">${s}</div>`).join('')}</div>
+    </div>
+    <div class="form-row"><label>Reason for visit (optional)</label><textarea id="appt-message" placeholder="Briefly describe your symptoms"></textarea></div>
+    <div id="booking-msg"></div>
+    <button class="btn btn-primary btn-block" id="confirm-booking">Confirm appointment</button>
+  `;
+  qsa('.slot', host).forEach(el => el.addEventListener('click', () => {
+    qsa('.slot', host).forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    SELECTED_SLOT = el.dataset.slot;
+  }));
+  document.getElementById('confirm-booking').addEventListener('click', bookAppointment);
+}
+
+async function bookAppointment() {
+  const dateInput = document.getElementById('appt-date').value;
+  const msgHost = document.getElementById('booking-msg');
+  if (!dateInput || !SELECTED_SLOT) {
+    msgHost.innerHTML = `<div class="form-msg error">Please choose a date and a time slot.</div>`;
+    return;
+  }
+  const btn = document.getElementById('confirm-booking');
+  btn.disabled = true; btn.textContent = 'Booking…';
+  try {
+    await api('/appointments', {
+      method: 'POST',
+      body: { doctor_id: SELECTED_DOCTOR.id, appointment_date: dateInput, appointment_time: SELECTED_SLOT, message: document.getElementById('appt-message').value },
+    });
+    toast('Appointment requested! You will be notified once confirmed.');
+    msgHost.innerHTML = `<div class="form-msg success">Appointment requested for ${fmtDate(dateInput)} at ${SELECTED_SLOT}.</div>`;
+    loadHome();
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Confirm appointment';
+  }
+}
+
+async function loadHome() {
+  const appts = await api(`/patients/${PATIENT_ID}/appointments`);
+  document.getElementById('stat-upcoming').textContent = appts.filter(a => ['pending','confirmed'].includes(a.status)).length;
+  document.getElementById('stat-completed').textContent = appts.filter(a => a.status === 'completed').length;
+  document.getElementById('stat-pending').textContent = appts.filter(a => a.status === 'pending').length;
+  const recent = appts.slice(0, 5);
+  document.getElementById('home-recent').innerHTML = recent.length ? `
+    <table><thead><tr><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+    <tbody>${recent.map(a => `<tr><td>${a.doctor_name}</td><td>${fmtDate(a.appointment_date)}</td><td>${a.appointment_time}</td><td>${badge(a.status)}</td></tr>`).join('')}</tbody></table>
+  ` : `<div class="empty-state"><div class="glyph">📭</div>No appointments yet. Book your first visit!</div>`;
+}
+
+async function loadHistory() {
+  const status = document.getElementById('history-filter').value;
+  const appts = await api(`/patients/${PATIENT_ID}/appointments`);
+  const filtered = status ? appts.filter(a => a.status === status) : appts;
+  const body = document.getElementById('history-body');
+  body.innerHTML = filtered.length ? filtered.map(a => `
+    <tr>
+      <td>${a.doctor_name}</td><td>${a.department_name || '—'}</td><td>${fmtDate(a.appointment_date)}</td><td>${a.appointment_time}</td><td>${badge(a.status)}</td>
+      <td>${['pending','confirmed'].includes(a.status) ? `<button class="icon-btn" data-cancel="${a.id}">Cancel</button>` : '—'}</td>
+    </tr>
+  `).join('') : `<tr><td colspan="6"><div class="empty-state">No appointments found.</div></td></tr>`;
+  qsa('[data-cancel]', body).forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Cancel this appointment?')) return;
+    await api(`/appointments/${btn.dataset.cancel}`, { method: 'DELETE' });
+    toast('Appointment cancelled');
+    loadHistory(); loadHome();
+  }));
+}
+document.getElementById('history-filter').addEventListener('change', loadHistory);
+
+document.getElementById('profile-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const msgHost = document.getElementById('profile-msg');
+  try {
+    await api(`/patients/${PATIENT_ID}`, {
+      method: 'PUT',
+      body: { name: f.name.value, phone: f.phone.value, date_of_birth: f.date_of_birth.value, gender: f.gender.value, address: f.address.value, medical_history: f.medical_history.value },
+    });
+    msgHost.innerHTML = `<div class="form-msg success">Profile updated.</div>`;
+    toast('Profile saved');
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+  }
+});
+
+init();
+</script>
+</body>
+</html>

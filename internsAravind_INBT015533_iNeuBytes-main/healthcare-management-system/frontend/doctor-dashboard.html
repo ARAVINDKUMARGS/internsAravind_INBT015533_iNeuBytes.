@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Dashboard — Wellframe Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="dash-shell">
+  <aside class="sidebar">
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#ff6b53"/><path d="M6 16h5l2-6 4 12 3-8 2 2h4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Wellframe</div>
+    <div class="side-section">Menu</div>
+    <a class="side-link active" data-tab="home">🏠 Overview</a>
+    <a class="side-link" data-tab="appointments">🗓 Appointments</a>
+    <a class="side-link" data-tab="profile">👤 My profile</a>
+    <div class="side-section">Account</div>
+    <a class="side-link" id="logout-link">↩ Log out</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1 id="page-title">Overview</h1>
+      <div class="user-pill" id="user-pill"></div>
+    </div>
+
+    <!-- HOME -->
+    <section id="tab-home">
+      <div class="grid-3">
+        <div class="stat-card"><div class="n" id="stat-today">–</div><div class="label">Today's appointments</div></div>
+        <div class="stat-card"><div class="n" id="stat-pending">–</div><div class="label">Awaiting confirmation</div></div>
+        <div class="stat-card"><div class="n" id="stat-total">–</div><div class="label">Total patients seen</div></div>
+      </div>
+      <div class="mt-24 table-wrap">
+        <div class="table-toolbar"><strong>Today's schedule</strong></div>
+        <div id="today-list"></div>
+      </div>
+    </section>
+
+    <!-- APPOINTMENTS -->
+    <section id="tab-appointments" class="hidden">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <strong>All appointments</strong>
+          <select id="appt-filter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>Patient</th><th>Phone</th><th>Date</th><th>Time</th><th>Notes</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="appt-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="tab-profile" class="hidden">
+      <div class="card form-card wide">
+        <h3>My profile</h3>
+        <div id="profile-msg"></div>
+        <form id="profile-form">
+          <div class="form-grid-2">
+            <div class="form-row"><label>Phone</label><input name="phone" required></div>
+            <div class="form-row"><label>Experience (years)</label><input name="experience_years" type="number" min="0"></div>
+          </div>
+          <div class="form-row"><label>Consultation fee (₹)</label><input name="consultation_fee" type="number" min="0"></div>
+          <div class="form-row"><label>Bio</label><textarea name="bio" placeholder="Short professional bio"></textarea></div>
+          <button class="btn btn-primary" type="submit">Save changes</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+const user = Auth.requireRole(['doctor']);
+renderUserPill('user-pill');
+let DOCTOR_ID = null;
+
+qsa('.side-link[data-tab]').forEach(link => link.addEventListener('click', () => switchTab(link.dataset.tab)));
+document.getElementById('logout-link').addEventListener('click', () => Auth.logout());
+
+function switchTab(tab) {
+  qsa('.side-link[data-tab]').forEach(l => l.classList.toggle('active', l.dataset.tab === tab));
+  ['home','appointments','profile'].forEach(t => document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab));
+  document.getElementById('page-title').textContent = { home: 'Overview', appointments: 'Appointments', profile: 'My profile' }[tab];
+  if (tab === 'appointments') loadAppointments();
+}
+
+async function init() {
+  const me = await api('/auth/me');
+  DOCTOR_ID = me.profile.id;
+  const f = document.getElementById('profile-form');
+  f.phone.value = me.phone || '';
+  f.experience_years.value = me.profile.experience_years || 0;
+  f.consultation_fee.value = me.profile.consultation_fee || 0;
+  f.bio.value = me.profile.bio || '';
+  loadHome();
+}
+
+async function loadHome() {
+  const appts = await api(`/doctors/${DOCTOR_ID}/appointments`);
+  const today = new Date().toISOString().split('T')[0];
+  const todays = appts.filter(a => a.appointment_date === today && a.status !== 'cancelled');
+  document.getElementById('stat-today').textContent = todays.length;
+  document.getElementById('stat-pending').textContent = appts.filter(a => a.status === 'pending').length;
+  document.getElementById('stat-total').textContent = new Set(appts.filter(a => a.status === 'completed').map(a => a.patient_name)).size;
+
+  document.getElementById('today-list').innerHTML = todays.length ? `
+    <table><thead><tr><th>Patient</th><th>Time</th><th>Status</th></tr></thead>
+    <tbody>${todays.map(a => `<tr><td>${a.patient_name}</td><td>${a.appointment_time}</td><td>${badge(a.status)}</td></tr>`).join('')}</tbody></table>
+  ` : `<div class="empty-state"><div class="glyph">🗓</div>No appointments scheduled for today.</div>`;
+}
+
+async function loadAppointments() {
+  const status = document.getElementById('appt-filter').value;
+  const appts = await api(`/doctors/${DOCTOR_ID}/appointments`);
+  const filtered = status ? appts.filter(a => a.status === status) : appts;
+  const body = document.getElementById('appt-body');
+  body.innerHTML = filtered.length ? filtered.map(a => `
+    <tr>
+      <td>${a.patient_name}</td><td>${a.patient_phone || '—'}</td><td>${fmtDate(a.appointment_date)}</td><td>${a.appointment_time}</td>
+      <td class="muted">${a.message || '—'}</td><td>${badge(a.status)}</td>
+      <td class="row-actions">
+        ${a.status === 'pending' ? `<button class="icon-btn" data-act="confirmed" data-id="${a.id}">Confirm</button>` : ''}
+        ${a.status === 'confirmed' ? `<button class="icon-btn" data-act="completed" data-id="${a.id}">Mark done</button>` : ''}
+        ${['pending','confirmed'].includes(a.status) ? `<button class="icon-btn" data-act="cancelled" data-id="${a.id}">Cancel</button>` : ''}
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="7"><div class="empty-state">No appointments found.</div></td></tr>`;
+
+  qsa('[data-act]', body).forEach(btn => btn.addEventListener('click', async () => {
+    await api(`/appointments/${btn.dataset.id}/status`, { method: 'PUT', body: { status: btn.dataset.act } });
+    toast('Appointment updated');
+    loadAppointments(); loadHome();
+  }));
+}
+document.getElementById('appt-filter').addEventListener('change', loadAppointments);
+
+document.getElementById('profile-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const msgHost = document.getElementById('profile-msg');
+  try {
+    await api(`/doctors/${DOCTOR_ID}`, {
+      method: 'PUT',
+      body: { phone: f.phone.value, experience_years: Number(f.experience_years.value), consultation_fee: Number(f.consultation_fee.value), bio: f.bio.value },
+    });
+    msgHost.innerHTML = `<div class="form-msg success">Profile updated.</div>`;
+    toast('Profile saved');
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+  }
+});
+
+init();
+</script>
+</body>
+</html>

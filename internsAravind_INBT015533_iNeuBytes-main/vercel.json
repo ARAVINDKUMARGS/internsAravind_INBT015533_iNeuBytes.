@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/css/(.*)", "destination": "/healthcare-management-system/frontend/css/$1" },
+    { "source": "/js/(.*)", "destination": "/healthcare-management-system/frontend/js/$1" },
+    { "source": "/(.*)", "destination": "/healthcare-management-system/frontend/$1" }
+  ]
+}

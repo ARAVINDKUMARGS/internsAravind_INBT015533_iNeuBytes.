@@ -1,0 +1,8 @@
+**/node_modules/
+**/.env
+**/healthcare.db
+**/healthcare.db-journal
+**/healthcare.db-wal
+**/healthcare.db-shm
+.DS_Store
+*.log
