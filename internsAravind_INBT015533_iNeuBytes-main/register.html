@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Wellframe Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#17847a"/><path d="M6 16h5l2-6 4 12 3-8 2 2h4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Wellframe Clinic
+    </a>
+    <div class="nav-cta"><a href="login.html" class="btn btn-outline btn-sm">Log in</a></div>
+  </div>
+</nav>
+
+<div class="auth-shell">
+  <div class="container">
+    <div class="card form-card wide">
+      <span class="eyebrow">Join Wellframe Clinic</span>
+      <h2>Create your patient account</h2>
+      <div id="reg-msg"></div>
+      <form id="register-form" novalidate>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label for="name">Full name</label>
+            <input id="name" name="name" required minlength="2" placeholder="Your name">
+          </div>
+          <div class="form-row">
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" required placeholder="you@email.com">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label for="phone">Phone number</label>
+            <input id="phone" name="phone" type="tel" required pattern="[0-9]{10}" placeholder="10-digit number">
+          </div>
+          <div class="form-row">
+            <label for="dob">Date of birth</label>
+            <input id="dob" name="date_of_birth" type="date">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="">Prefer not to say</option>
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="address">Address</label>
+            <input id="address" name="address" placeholder="City, State">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required minlength="6" placeholder="At least 6 characters">
+        </div>
+        <div class="form-row">
+          <label for="confirm">Confirm password</label>
+          <input id="confirm" type="password" required minlength="6" placeholder="Re-enter password">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Create account</button>
+      </form>
+      <div class="auth-switch">Already have an account? <a href="login.html">Log in</a></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const msgHost = document.getElementById('reg-msg');
+  msgHost.innerHTML = '';
+  if (!form.checkValidity()) { form.reportValidity(); return; }
+  if (form.password.value !== form.confirm.value) {
+    msgHost.innerHTML = `<div class="form-msg error">Passwords do not match.</div>`;
+    return;
+  }
+  const btn = form.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  try {
+    const res = await api('/auth/register', {
+      method: 'POST', auth: false,
+      body: {
+        name: form.name.value.trim(), email: form.email.value.trim(), password: form.password.value,
+        phone: form.phone.value.trim(), date_of_birth: form.date_of_birth.value || null,
+        gender: form.gender.value || null, address: form.address.value.trim() || null,
+      },
+    });
+    Auth.save(res.token, res.user);
+    window.location.href = 'patient-dashboard.html';
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+    btn.disabled = false; btn.textContent = 'Create account';
+  }
+});
+</script>
+</body>
+</html>

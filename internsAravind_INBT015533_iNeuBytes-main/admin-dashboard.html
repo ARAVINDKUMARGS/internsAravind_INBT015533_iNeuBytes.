@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Wellframe Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="dash-shell">
+  <aside class="sidebar">
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#ff6b53"/><path d="M6 16h5l2-6 4 12 3-8 2 2h4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Wellframe</div>
+    <div class="side-section">Dashboard</div>
+    <a class="side-link active" data-tab="overview">📊 Overview</a>
+    <div class="side-section">Management</div>
+    <a class="side-link" data-tab="doctors">🩺 Doctors</a>
+    <a class="side-link" data-tab="patients">🧑‍🤝‍🧑 Patients</a>
+    <a class="side-link" data-tab="departments">🏥 Departments</a>
+    <a class="side-link" data-tab="appointments">🗓 Appointments</a>
+    <div class="side-section">Insights</div>
+    <a class="side-link" data-tab="reports">📈 Reports</a>
+    <div class="side-section">Account</div>
+    <a class="side-link" id="logout-link">↩ Log out</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1 id="page-title">Overview</h1>
+      <div class="user-pill" id="user-pill"></div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section id="tab-overview">
+      <div class="grid-4" id="overview-stats"></div>
+      <div class="grid-2 mt-24">
+        <div class="table-wrap">
+          <div class="table-toolbar"><strong>Appointments by status</strong></div>
+          <div id="status-breakdown" style="padding:16px;"></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar"><strong>Department activity</strong></div>
+          <div id="dept-breakdown" style="padding:0;"></div>
+        </div>
+      </div>
+      <div class="mt-24 table-wrap">
+        <div class="table-toolbar"><strong>Recent appointments</strong></div>
+        <div id="recent-appts"></div>
+      </div>
+    </section>
+
+    <!-- DOCTORS -->
+    <section id="tab-doctors" class="hidden">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <strong>Manage doctors</strong>
+          <div style="display:flex; gap:10px;">
+            <input id="doc-search" placeholder="Search doctors…">
+            <button class="btn btn-primary btn-sm" id="add-doctor-btn">+ Add doctor</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Department</th><th>Experience</th><th>Fee</th><th>Phone</th><th>Actions</th></tr></thead>
+          <tbody id="doctors-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PATIENTS -->
+    <section id="tab-patients" class="hidden">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <strong>Manage patients</strong>
+          <input id="patient-search" placeholder="Search patients…">
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Actions</th></tr></thead>
+          <tbody id="patients-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DEPARTMENTS -->
+    <section id="tab-departments" class="hidden">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <strong>Manage departments</strong>
+          <button class="btn btn-primary btn-sm" id="add-dept-btn">+ Add department</button>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Description</th><th>Doctors</th><th>Actions</th></tr></thead>
+          <tbody id="departments-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- APPOINTMENTS -->
+    <section id="tab-appointments" class="hidden">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <strong>All appointments</strong>
+          <select id="admin-appt-filter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option><option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>Patient</th><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="admin-appt-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="tab-reports" class="hidden">
+      <div class="card">
+        <h3>Appointment report</h3>
+        <p>Export a full appointment log including patient, doctor, department and status for record-keeping.</p>
+        <button class="btn btn-dark" id="export-csv">Download CSV report</button>
+      </div>
+      <div class="mt-24 grid-3" id="report-totals"></div>
+    </section>
+  </main>
+</div>
+
+<!-- Modal: Add doctor -->
+<div class="modal-backdrop" id="doctor-modal">
+  <div class="modal">
+    <div class="modal-head"><h3>Add doctor</h3><button class="modal-close" data-close="doctor-modal">✕</button></div>
+    <div id="doctor-modal-msg"></div>
+    <form id="doctor-form">
+      <div class="form-row"><label>Full name</label><input name="name" required></div>
+      <div class="form-row"><label>Email</label><input name="email" type="email" required></div>
+      <div class="form-row"><label>Temporary password</label><input name="password" type="text" required minlength="6" value="Doctor@123"></div>
+      <div class="form-grid-2">
+        <div class="form-row"><label>Phone</label><input name="phone" required></div>
+        <div class="form-row"><label>Department</label><select name="department_id" id="doctor-dept-select" required></select></div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-row"><label>Experience (yrs)</label><input name="experience_years" type="number" min="0" value="1"></div>
+        <div class="form-row"><label>Consultation fee (₹)</label><input name="consultation_fee" type="number" min="0" value="500"></div>
+      </div>
+      <div class="form-row"><label>Bio</label><textarea name="bio"></textarea></div>
+      <button class="btn btn-primary btn-block" type="submit">Create doctor account</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit department -->
+<div class="modal-backdrop" id="dept-modal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="dept-modal-title">Add department</h3><button class="modal-close" data-close="dept-modal">✕</button></div>
+    <div id="dept-modal-msg"></div>
+    <form id="dept-form">
+      <input type="hidden" name="id">
+      <div class="form-row"><label>Name</label><input name="name" required></div>
+      <div class="form-row"><label>Description</label><textarea name="description"></textarea></div>
+      <button class="btn btn-primary btn-block" type="submit">Save department</button>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+Auth.requireRole(['admin']);
+renderUserPill('user-pill');
+let DEPARTMENTS = [];
+
+qsa('.side-link[data-tab]').forEach(link => link.addEventListener('click', () => switchTab(link.dataset.tab)));
+document.getElementById('logout-link').addEventListener('click', () => Auth.logout());
+qsa('.modal-close').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+const loaders = {
+  overview: loadOverview, doctors: loadDoctors, patients: loadPatients,
+  departments: loadDepartments, appointments: loadAdminAppointments, reports: loadReports,
+};
+function switchTab(tab) {
+  qsa('.side-link[data-tab]').forEach(l => l.classList.toggle('active', l.dataset.tab === tab));
+  Object.keys(loaders).forEach(t => document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab));
+  document.getElementById('page-title').textContent = tab.charAt(0).toUpperCase() + tab.slice(1);
+  loaders[tab]();
+}
+
+async function init() {
+  DEPARTMENTS = await api('/departments');
+  const sel = document.getElementById('doctor-dept-select');
+  sel.innerHTML = DEPARTMENTS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+  loadOverview();
+}
+
+async function loadOverview() {
+  const s = await api('/admin/stats');
+  document.getElementById('overview-stats').innerHTML = `
+    <div class="stat-card"><div class="n">${s.totals.doctors}</div><div class="label">Total doctors</div><span class="tag tag-teal">Active staff</span></div>
+    <div class="stat-card"><div class="n">${s.totals.patients}</div><div class="label">Total patients</div><span class="tag tag-teal">Registered</span></div>
+    <div class="stat-card"><div class="n">${s.totals.appointments}</div><div class="label">Total appointments</div><span class="tag tag-coral">All time</span></div>
+    <div class="stat-card"><div class="n">${s.totals.departments}</div><div class="label">Departments</div><span class="tag tag-teal">Active</span></div>
+  `;
+  const st = s.appointmentsByStatus;
+  document.getElementById('status-breakdown').innerHTML = `
+    <div class="grid-2">
+      <div>${badge('pending')} <strong>${st.pending}</strong></div>
+      <div>${badge('confirmed')} <strong>${st.confirmed}</strong></div>
+      <div>${badge('completed')} <strong>${st.completed}</strong></div>
+      <div>${badge('cancelled')} <strong>${st.cancelled}</strong></div>
+    </div>`;
+  document.getElementById('dept-breakdown').innerHTML = `
+    <table><thead><tr><th>Department</th><th>Doctors</th><th>Appointments</th></tr></thead>
+    <tbody>${s.departmentStats.map(d => `<tr><td>${d.name}</td><td>${d.doctor_count}</td><td>${d.appointment_count}</td></tr>`).join('')}</tbody></table>`;
+  document.getElementById('recent-appts').innerHTML = s.recentAppointments.length ? `
+    <table><thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+    <tbody>${s.recentAppointments.map(a => `<tr><td>${a.patient_name}</td><td>${a.doctor_name}</td><td>${fmtDate(a.appointment_date)}</td><td>${a.appointment_time}</td><td>${badge(a.status)}</td></tr>`).join('')}</tbody></table>
+  ` : `<div class="empty-state">No appointments yet.</div>`;
+}
+
+// ---------- Doctors ----------
+async function loadDoctors() {
+  const search = document.getElementById('doc-search').value;
+  const doctors = await api('/doctors' + (search ? `?search=${encodeURIComponent(search)}` : ''));
+  document.getElementById('doctors-body').innerHTML = doctors.length ? doctors.map(d => `
+    <tr>
+      <td>${d.name}</td><td>${d.department_name || '—'}</td><td>${d.experience_years} yrs</td><td>₹${d.consultation_fee}</td><td>${d.phone || '—'}</td>
+      <td class="row-actions"><button class="icon-btn" data-del-doctor="${d.id}">Delete</button></td>
+    </tr>
+  `).join('') : `<tr><td colspan="6"><div class="empty-state">No doctors found.</div></td></tr>`;
+  qsa('[data-del-doctor]').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Delete this doctor? This cannot be undone.')) return;
+    await api(`/doctors/${btn.dataset.delDoctor}`, { method: 'DELETE' });
+    toast('Doctor deleted'); loadDoctors();
+  }));
+}
+document.getElementById('doc-search').addEventListener('input', debounce(loadDoctors, 300));
+document.getElementById('add-doctor-btn').addEventListener('click', () => openModal('doctor-modal'));
+document.getElementById('doctor-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target; const msgHost = document.getElementById('doctor-modal-msg');
+  try {
+    await api('/auth/register-staff', {
+      method: 'POST',
+      body: {
+        name: f.name.value, email: f.email.value, password: f.password.value, role: 'doctor',
+        phone: f.phone.value, department_id: Number(f.department_id.value),
+        experience_years: Number(f.experience_years.value), consultation_fee: Number(f.consultation_fee.value), bio: f.bio.value,
+      },
+    });
+    toast('Doctor account created');
+    closeModal('doctor-modal'); f.reset(); loadDoctors();
+  } catch (err) { msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`; }
+});
+
+// ---------- Patients ----------
+async function loadPatients() {
+  const search = document.getElementById('patient-search').value;
+  const patients = await api('/patients' + (search ? `?search=${encodeURIComponent(search)}` : ''));
+  document.getElementById('patients-body').innerHTML = patients.length ? patients.map(p => `
+    <tr>
+      <td>${p.name}</td><td>${p.email}</td><td>${p.phone || '—'}</td><td>${p.gender || '—'}</td>
+      <td class="row-actions"><button class="icon-btn" data-del-patient="${p.id}">Delete</button></td>
+    </tr>
+  `).join('') : `<tr><td colspan="5"><div class="empty-state">No patients found.</div></td></tr>`;
+  qsa('[data-del-patient]').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Delete this patient record? This cannot be undone.')) return;
+    await api(`/patients/${btn.dataset.delPatient}`, { method: 'DELETE' });
+    toast('Patient deleted'); loadPatients();
+  }));
+}
+document.getElementById('patient-search').addEventListener('input', debounce(loadPatients, 300));
+
+// ---------- Departments ----------
+async function loadDepartments() {
+  DEPARTMENTS = await api('/departments');
+  document.getElementById('departments-body').innerHTML = DEPARTMENTS.length ? DEPARTMENTS.map(d => `
+    <tr>
+      <td>${d.name}</td><td class="muted">${d.description || '—'}</td><td>${d.doctor_count}</td>
+      <td class="row-actions">
+        <button class="icon-btn" data-edit-dept='${JSON.stringify(d).replace(/'/g, "&apos;")}'>Edit</button>
+        <button class="icon-btn" data-del-dept="${d.id}">Delete</button>
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="4"><div class="empty-state">No departments yet.</div></td></tr>`;
+  qsa('[data-del-dept]').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Delete this department?')) return;
+    try { await api(`/departments/${btn.dataset.delDept}`, { method: 'DELETE' }); toast('Department deleted'); loadDepartments(); }
+    catch (err) { toast(err.message, 'error'); }
+  }));
+  qsa('[data-edit-dept]').forEach(btn => btn.addEventListener('click', () => {
+    const d = JSON.parse(btn.dataset.editDept.replace(/&apos;/g, "'"));
+    document.getElementById('dept-modal-title').textContent = 'Edit department';
+    const f = document.getElementById('dept-form');
+    f.id.value = d.id; f.name.value = d.name; f.description.value = d.description || '';
+    openModal('dept-modal');
+  }));
+}
+document.getElementById('add-dept-btn').addEventListener('click', () => {
+  document.getElementById('dept-modal-title').textContent = 'Add department';
+  document.getElementById('dept-form').reset();
+  document.getElementById('dept-form').id.value = '';
+  openModal('dept-modal');
+});
+document.getElementById('dept-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target; const msgHost = document.getElementById('dept-modal-msg');
+  try {
+    if (f.id.value) await api(`/departments/${f.id.value}`, { method: 'PUT', body: { name: f.name.value, description: f.description.value } });
+    else await api('/departments', { method: 'POST', body: { name: f.name.value, description: f.description.value } });
+    toast('Department saved'); closeModal('dept-modal'); loadDepartments();
+  } catch (err) { msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`; }
+});
+
+// ---------- Appointments ----------
+async function loadAdminAppointments() {
+  const status = document.getElementById('admin-appt-filter').value;
+  const appts = await api('/appointments' + (status ? `?status=${status}` : ''));
+  document.getElementById('admin-appt-body').innerHTML = appts.length ? appts.map(a => `
+    <tr><td>${a.patient_name}</td><td>${a.doctor_name}</td><td>${a.department_name || '—'}</td><td>${fmtDate(a.appointment_date)}</td><td>${a.appointment_time}</td><td>${badge(a.status)}</td></tr>
+  `).join('') : `<tr><td colspan="6"><div class="empty-state">No appointments found.</div></td></tr>`;
+}
+document.getElementById('admin-appt-filter').addEventListener('change', loadAdminAppointments);
+
+// ---------- Reports ----------
+async function loadReports() {
+  const s = await api('/admin/stats');
+  document.getElementById('report-totals').innerHTML = `
+    <div class="stat-card"><div class="n">${s.totals.appointments}</div><div class="label">Total appointments logged</div></div>
+    <div class="stat-card"><div class="n">${s.appointmentsByStatus.completed}</div><div class="label">Consultations completed</div></div>
+    <div class="stat-card"><div class="n">${s.appointmentsByStatus.cancelled}</div><div class="label">Appointments cancelled</div></div>
+  `;
+}
+document.getElementById('export-csv').addEventListener('click', async () => {
+  const res = await api('/admin/reports/appointments?format=csv', { raw: true });
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'appointments-report.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — Wellframe Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#17847a"/><path d="M6 16h5l2-6 4 12 3-8 2 2h4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Wellframe Clinic
+    </a>
+    <div class="nav-cta"><a href="register.html" class="btn btn-outline btn-sm">Create account</a></div>
+  </div>
+</nav>
+
+<div class="auth-shell">
+  <div class="container">
+    <!-- LOGIN CARD -->
+    <div class="card form-card" id="login-card">
+      <span class="eyebrow">Welcome back</span>
+      <h2>Log in to your account</h2>
+      <div id="login-msg"></div>
+      <form id="login-form" novalidate>
+        <div class="form-row">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" required placeholder="you@email.com">
+        </div>
+        <div class="form-row">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label for="password" style="margin-bottom:0;">Password</label>
+            <a href="#" id="toggle-forgot" style="font-size:0.85rem; color:var(--brand); text-decoration:none;">Forgot password?</a>
+          </div>
+          <input id="password" name="password" type="password" required placeholder="••••••••" style="margin-top:6px;">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Log in</button>
+      </form>
+      <div class="auth-switch">Don't have an account? <a href="register.html">Register as a patient</a></div>
+      <div class="mt-24" style="background:var(--mint-100); border-radius:10px; padding:14px; font-size:.8rem; color:var(--ink-600);">
+        <strong>Demo logins</strong><br>
+        Admin: admin@clinic.com / Admin@123<br>
+        Doctor: ananya.rao@clinic.com / Doctor@123<br>
+        Patient: patient@demo.com / Patient@123
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD CARD (Hidden by default) -->
+    <div class="card form-card" id="forgot-card" style="display:none;">
+      <span class="eyebrow">Password Recovery</span>
+      <h2>Reset your password</h2>
+      <p style="font-size:0.9rem; color:var(--ink-600); margin-bottom:16px;">Enter your registered email address and we'll send you a link to reset your password.</p>
+      <div id="forgot-msg"></div>
+      <form id="forgot-form" novalidate>
+        <div class="form-row">
+          <label for="forgot-email">Email address</label>
+          <input id="forgot-email" name="email" type="email" required placeholder="you@email.com">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Send Reset Link</button>
+      </form>
+      <div class="auth-switch mt-16"><a href="#" id="toggle-login" style="color:var(--brand);">← Back to Log in</a></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+const loginCard = document.getElementById('login-card');
+const forgotCard = document.getElementById('forgot-card');
+
+document.getElementById('toggle-forgot').addEventListener('click', (e) => {
+  e.preventDefault();
+  loginCard.style.display = 'none';
+  forgotCard.style.display = 'block';
+});
+
+document.getElementById('toggle-login').addEventListener('click', (e) => {
+  e.preventDefault();
+  forgotCard.style.display = 'none';
+  loginCard.style.display = 'block';
+});
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const msgHost = document.getElementById('login-msg');
+  msgHost.innerHTML = '';
+  const btn = form.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  try {
+    const res = await api('/auth/login', {
+      method: 'POST', auth: false,
+      body: { email: form.email.value.trim(), password: form.password.value },
+    });
+    Auth.save(res.token, res.user);
+    const dest = { admin: 'admin-dashboard.html', doctor: 'doctor-dashboard.html', patient: 'patient-dashboard.html' }[res.user.role];
+    window.location.href = dest || 'index.html';
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+    btn.disabled = false; btn.textContent = 'Log in';
+  }
+});
+
+document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const msgHost = document.getElementById('forgot-msg');
+  msgHost.innerHTML = '';
+  const btn = form.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Sending link…';
+  try {
+    const res = await api('/auth/forgot-password', {
+      method: 'POST', auth: false,
+      body: { email: form.email.value.trim() },
+    });
+    let extraNote = '';
+    if (res.reset_token) {
+      extraNote = `<br><div class="mt-8" style="font-size:0.8rem; word-break:break-all; background:#eef6f5; padding:8px; border-radius:6px;"><strong>Dev Mode Direct Reset Link:</strong><br><a href="reset-password.html?token=${res.reset_token}">reset-password.html?token=${res.reset_token}</a></div>`;
+    }
+    msgHost.innerHTML = `<div class="form-msg success">${res.message}${extraNote}</div>`;
+  } catch (err) {
+    msgHost.innerHTML = `<div class="form-msg error">${err.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send Reset Link';
+  }
+});
+</script>
+</body>
+</html>
