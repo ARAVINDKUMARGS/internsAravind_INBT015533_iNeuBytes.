@@ -1,22 +1,20 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js?__path=$1"
-    },
+      "src": "api/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "internsAravind_INBT015533_iNeuBytes-main/**"
+        ]
+      }
+    }
+  ],
+  "routes": [
     {
-      "source": "/css/(.*)",
-      "destination": "/internsAravind_INBT015533_iNeuBytes-main/css/$1"
-    },
-    {
-      "source": "/js/(.*)",
-      "destination": "/internsAravind_INBT015533_iNeuBytes-main/js/$1"
-    },
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/internsAravind_INBT015533_iNeuBytes-main/$1"
+      "src": "/(.*)",
+      "dest": "/api/index.js"
     }
   ]
 }
