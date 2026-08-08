@@ -3,10 +3,8 @@ const serverPath = path.resolve(__dirname, '..', 'internsAravind_INBT015533_iNeu
 const app = require(serverPath);
 
 module.exports = (req, res) => {
-  let url = req.headers['x-forwarded-uri'] || req.headers['x-matched-path'] || req.url || '';
-  const pathname = url.split('?')[0];
-  if (!pathname.startsWith('/api')) {
-    req.url = '/api' + (url.startsWith('/') ? '' : '/') + url;
+  if (req.url && !req.url.startsWith('/api')) {
+    req.url = '/api' + (req.url.startsWith('/') ? '' : '/') + req.url;
   }
   return app(req, res);
 };
